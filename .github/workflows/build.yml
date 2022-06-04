@@ -7,12 +7,12 @@ jobs:
       fail-fast: false
       matrix:
         os: [windows-latest]
-        build_type: [debug]
+        build_type: [release]
         enable_ui: [off]
-        include:
-          - os: ubuntu-latest
-            build_type: debug
-            enable_ui: on
+        #include:
+          #- os: ubuntu-latest
+            #build_type: debug
+            #enable_ui: on
     steps:
     - uses: actions/checkout@v2
       with:
@@ -37,42 +37,42 @@ jobs:
       shell: bash
       run: |
         cmake -S . -B build -G Ninja \
-          -DENABLE_TESTS=ON \
+          -DENABLE_TESTS=OFF \
           -DENABLE_UI=${{ matrix.enable_ui }}
     - name: Compiling
       shell: bash
       run: |
         cd build && ninja
-    - name: Running C++ Tests
-      shell: bash
-      run: |
-        if [[ "${{ runner.os }}" == "Linux" ]] ; then
-          export XVFB=xvfb-run
-        fi
-        cd build && $XVFB ctest --output-on-failure
-    - name: Running CLI Tessts
-      shell: bash
-      run: |
-        if [[ "${{ runner.os }}" == "Linux" ]] ; then
-          export XVFB=xvfb-run
-        fi
-        if [[ "${{ github.base_ref }}" == "beta" ]] || [[ "${{ github.ref }}" == "refs/heads/beta" ]] ; then
-          export TESTS_BRANCH=beta
-        else
-          export TESTS_BRANCH=main
-        fi
-        cd build
-        export ASEPRITE=$PWD/bin/aseprite
-        git clone --branch $TESTS_BRANCH --recursive https://github.com/aseprite/tests.git
-        cd tests
-        $XVFB bash run-tests.sh
+    #- name: Running C++ Tests
+     # shell: bash
+     # run: |
+      #  if [[ "${{ runner.os }}" == "Linux" ]] ; then
+       #   export XVFB=xvfb-run
+       # fi
+       # cd build && $XVFB ctest --output-on-failure
+    #- name: Running CLI Tessts
+     # shell: bash
+     # run: |
+      #  if [[ "${{ runner.os }}" == "Linux" ]] ; then
+       #   export XVFB=xvfb-run
+       # fi
+       # if [[ "${{ github.base_ref }}" == "beta" ]] || [[ "${{ github.ref }}" == "refs/heads/beta" ]] ; then
+        #  export TESTS_BRANCH=beta
+        #else
+         # export TESTS_BRANCH=main
+        #fi
+        #cd build
+        #export ASEPRITE=$PWD/bin/aseprite
+        #git clone --branch $TESTS_BRANCH --recursive https://github.com/aseprite/tests.git
+        #cd tests
+        #$XVFB bash run-tests.sh
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v3.1.0
       with:
         # Artifact name
         name: 'artifact'
         # A file, directory or wildcard pattern that describes what to upload
-        path: '*'
+        path: 'build/bin/'
         # The desired behavior if no files are found using the provided path.
         #if-no-files-found: # optional, default is warn
         # Duration after which artifact will expire in days. 0 means using default retention.
