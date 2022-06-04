@@ -50,7 +50,7 @@ jobs:
           export XVFB=xvfb-run
         fi
         cd build && $XVFB ctest --output-on-failure
-    - name: Running CLI Tests
+    - name: Running CLI Tessts
       shell: bash
       run: |
         if [[ "${{ runner.os }}" == "Linux" ]] ; then
